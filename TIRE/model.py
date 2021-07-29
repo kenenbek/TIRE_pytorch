@@ -67,7 +67,7 @@ class AbstractAE(nn.Module):
         dataset = TensorDataset(torch.from_numpy(windows).float())
         dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
         opt = optim.AdamW(self.parameters(), lr=lr)
-        tbar = trange(epoches, desc='Loss: ', leave=True)
+        tbar = trange(epoches, desc='Loss: ', leave=True, disable=True)
 
         for epoch in tbar:
             for batch_X in dataloader:
@@ -223,7 +223,7 @@ class AbstractTIRE(nn.Module):
             raise NotImplementedError
         windows_TD = self.ts_to_windows(ts, self.window_size_td)
         if fit_TD:
-            print("Training autoencoder for original timeseries")
+            # print("Training autoencoder for original timeseries")
             self.AE_TD.fit(windows_TD, **kwargs)
         if len(windows_TD.shape) == 3:
             windows_FD = np.array([utils.calc_fft(windows_TD[:,:,i], self.nfft, self.norm_mode) for i in range(self.input_dim)]).transpose(1,2,0)
@@ -231,7 +231,7 @@ class AbstractTIRE(nn.Module):
             windows_FD = utils.calc_fft(windows_TD, self.nfft, self.norm_mode)
 
         if fit_FD:
-            print('Training autoencoder for FFT timeseries')
+            # print('Training autoencoder for FFT timeseries')
             self.AE_FD.fit(windows_FD, **kwargs)
 
     def predict(self, ts):
